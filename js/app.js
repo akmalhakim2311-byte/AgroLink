@@ -1,39 +1,29 @@
 class User {
-  login(username) {
-    if (username === "") {
-      alert("Please enter username");
-      return false;
+  constructor(username, password) {
+    this.username = username;
+    this.password = password;
+  }
+
+  authenticate() {
+    // Simple demo credentials
+    if (this.username === "admin" && this.password === "1234") {
+      return true;
     }
-    window.location.href = "dashboard.html";
-  }
-}
-
-class Plantation {
-  constructor(area, hours, rate) {
-    this.area = area;
-    this.hours = hours;
-    this.rate = rate;
-  }
-
-  calculateCost() {
-    return this.area * this.hours * this.rate;
+    return false;
   }
 }
 
 function login() {
   const username = document.getElementById("username").value;
-  const user = new User();
-  user.login(username);
-}
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("loginMsg");
 
-function calculate() {
-  const area = document.getElementById("area").value;
-  const hours = document.getElementById("hours").value;
-  const rate = document.getElementById("rate").value;
+  const user = new User(username, password);
 
-  const plantation = new Plantation(area, hours, rate);
-  const cost = plantation.calculateCost();
-
-  document.getElementById("result").innerText =
-    "Total Operational Cost: RM " + cost;
+  if (user.authenticate()) {
+    window.location.href = "dashboard.html";
+  } else {
+    msg.innerText = "Invalid username or password";
+    msg.style.color = "red";
+  }
 }
