@@ -27,3 +27,16 @@ function login() {
     msg.style.color = "red";
   }
 }
+
+function sendWhatsApp() {
+  const message = 
+    "AgroLinkX Report:%0A" +
+    "Operation Cost Calculation Completed.%0A" +
+    "Status: Successful.%0A" +
+    "Thank you.";
+
+  const phoneNumber = "60123456789"; // demo number
+  const url = `https://wa.me/${phoneNumber}?text=${message}`;
+
+  window.open(url, "_blank");
+}
