@@ -70,14 +70,19 @@ document.addEventListener("DOMContentLoaded", function () {
 function sendWhatsApp() {
   const cost = localStorage.getItem("totalCost");
 
-  const message =
-    "AgroLinkX Report:%0A" +
-    "Operation Cost Calculation Completed.%0A" +
-    "Total Cost: RM " + cost + "%0A" +
-    "Status: Successful.";
-
-  const phoneNumber = "60123456789"; // Demo number
-  const url = `https://wa.me/${phoneNumber}?text=${message}`;
-
-  window.open(url, "_blank");
+  fetch("https://your-backend-url/send-whatsapp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message:
+        `AgroLinkX Report\n` +
+        `Operation Completed Successfully\n` +
+        `Total Cost: RM ${cost}`
+    })
+  })
+  .then(res => res.json())
+  .then(data => alert("WhatsApp notification sent successfully"))
+  .catch(err => alert("Failed to send WhatsApp"));
 }
