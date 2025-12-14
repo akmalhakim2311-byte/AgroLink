@@ -1,88 +1,65 @@
-// ================= USER CLASS =================
-class User {
-  constructor(username, password) {
-    this.username = username;
-    this.password = password;
+// ================= SIGN UP =================
+function signup() {
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+
+  if (!email || !password) {
+    alert("Please fill all fields");
+    return;
   }
 
-  authenticate() {
-    // Demo credentials
-    return this.username === "admin" && this.password === "1234";
-  }
+  localStorage.setItem("userEmail", email);
+  localStorage.setItem("userPassword", password);
+
+  alert("Sign up successful");
+  window.location.href = "dashboard.html";
 }
 
-// ================= PLANTATION CLASS =================
-class Plantation {
-  constructor(area, hours, rate) {
-    this.area = area;
-    this.hours = hours;
-    this.rate = rate;
-  }
-
-  calculateCost() {
-    return this.area * this.hours * this.rate;
-  }
-}
-
-// ================= LOGIN FUNCTION =================
+// ================= LOGIN =================
 function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const msg = document.getElementById("loginMsg");
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-  const user = new User(username, password);
-
-  if (user.authenticate()) {
-    localStorage.setItem("loggedInUser", username);
+  if (
+    email === localStorage.getItem("userEmail") &&
+    password === localStorage.getItem("userPassword")
+  ) {
     window.location.href = "dashboard.html";
   } else {
-    msg.innerText = "Invalid username or password";
-    msg.style.color = "red";
+    document.getElementById("loginMsg").innerText =
+      "Invalid email or password";
   }
 }
 
-// ================= CALCULATION FUNCTION =================
+// ================= LOGOUT =================
+function logout() {
+  window.location.href = "index.html";
+}
+
+// ================= CALCULATION =================
 function calculate() {
   const area = Number(document.getElementById("area").value);
   const hours = Number(document.getElementById("hours").value);
   const rate = Number(document.getElementById("rate").value);
 
-  const plantation = new Plantation(area, hours, rate);
-  const cost = plantation.calculateCost();
-
-  localStorage.setItem("totalCost", cost);
+  const total = area * hours * rate;
+  localStorage.setItem("totalCost", total);
 
   document.getElementById("result").innerText =
-    "Total Operational Cost: RM " + cost;
+    "Total Cost: RM " + total;
 }
 
-// ================= NOTIFICATION DISPLAY =================
-document.addEventListener("DOMContentLoaded", function () {
-  const summary = document.getElementById("summary");
-  if (summary) {
-    const cost = localStorage.getItem("totalCost");
-    summary.innerText =
-      "Operation Completed Successfully.\nTotal Cost: RM " + cost;
-  }
-});
-
-// ================= WHATSAPP NOTIFICATION =================
-function sendWhatsApp() {
+// ================= EMAIL RECEIPT =================
+function sendReceipt() {
+  const email = localStorage.getItem("userEmail");
   const cost = localStorage.getItem("totalCost");
 
-  fetch("https://your-backend-url/send-whatsapp", {
+  fetch("https://YOUR-BACKEND-URL/send-receipt", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      message:
-        `AgroLinkX Report\n` +
-        `Operation Completed Successfully\n` +
-        `Total Cost: RM ${cost}`
-    })
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, totalCost: cost })
   })
   .then(res => res.json())
-  .then(data => alert("WhatsApp notification sent successfully"))
-  .catch(err => alert("Failed to send WhatsApp"));
+  .then(() => alert("Receipt sent to " + email))
+  .catch(() => alert("Failed to send receipt"));
 }
