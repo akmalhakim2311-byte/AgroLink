@@ -1,6 +1,6 @@
-# AgroLinkX
+# AgroLink
 
-AgroLinkX is a web-based digital platform for smart agriculture and plantation
+AgroLink is a web-based digital platform for smart agriculture and plantation
 operations, designed as an academic and industry-oriented prototype.
 
 ## Features
