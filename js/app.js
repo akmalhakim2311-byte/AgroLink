@@ -1,65 +1,90 @@
+// ================= SESSION CHECK =================
+function checkSession() {
+  if (!sessionStorage.getItem("loggedIn")) {
+    window.location.href = "index.html";
+  }
+}
+
 // ================= SIGN UP =================
 function signup() {
-  const email = document.getElementById("signupEmail").value;
-  const password = document.getElementById("signupPassword").value;
+  const email = signupEmail.value;
+  const password = signupPassword.value;
 
   if (!email || !password) {
-    alert("Please fill all fields");
+    alert("Fill all fields");
     return;
   }
 
   localStorage.setItem("userEmail", email);
   localStorage.setItem("userPassword", password);
 
-  alert("Sign up successful");
-  window.location.href = "dashboard.html";
+  alert("Account created");
+  window.location.href = "index.html";
 }
 
 // ================= LOGIN =================
 function login() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
   if (
     email === localStorage.getItem("userEmail") &&
     password === localStorage.getItem("userPassword")
   ) {
+    sessionStorage.setItem("loggedIn", "true");
+    sessionStorage.setItem("email", email);
     window.location.href = "dashboard.html";
   } else {
-    document.getElementById("loginMsg").innerText =
-      "Invalid email or password";
+    loginMsg.innerText = "Invalid credentials";
   }
 }
 
 // ================= LOGOUT =================
 function logout() {
+  sessionStorage.clear();
   window.location.href = "index.html";
 }
 
 // ================= CALCULATION =================
 function calculate() {
-  const area = Number(document.getElementById("area").value);
-  const hours = Number(document.getElementById("hours").value);
-  const rate = Number(document.getElementById("rate").value);
+  const area = Number(areaInput.value);
+  const hours = Number(hoursInput.value);
+  const rate = Number(rateInput.value);
+
+  if (!area || !hours || !rate) {
+    alert("Enter all values");
+    return;
+  }
 
   const total = area * hours * rate;
   localStorage.setItem("totalCost", total);
 
-  document.getElementById("result").innerText =
-    "Total Cost: RM " + total;
+  result.innerText = "Total Cost: RM " + total;
 }
 
-// ================= EMAIL RECEIPT =================
-function sendReceipt() {
-  const email = localStorage.getItem("userEmail");
-  const cost = localStorage.getItem("totalCost");
+// ================= EMAIL + PDF =================
+function sendEmailInvoice() {
+  const email = sessionStorage.getItem("email");
+  const totalCost = localStorage.getItem("totalCost");
 
-  fetch("https://YOUR-BACKEND-URL/send-receipt", {
+  fetch("https://YOUR-BACKEND-URL/send-invoice", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, totalCost: cost })
+    body: JSON.stringify({ email, totalCost })
   })
-  .then(res => res.json())
-  .then(() => alert("Receipt sent to " + email))
-  .catch(() => alert("Failed to send receipt"));
+  .then(() => alert("Email + PDF Invoice sent"))
+  .catch(() => alert("Email failed"));
+}
+
+// ================= WHATSAPP =================
+function sendWhatsApp() {
+  const cost = localStorage.getItem("totalCost");
+
+  const message =
+    "AgroLinkX Invoice Notification%0A%0A" +
+    "Total Cost: RM " + cost + "%0A" +
+    "Invoice sent to your email.";
+
+  const url = "https://wa.me/60174909836?text=" + message;
+  window.open(url, "_blank");
 }
