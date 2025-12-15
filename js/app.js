@@ -81,7 +81,7 @@ function sendWhatsApp() {
   const cost = localStorage.getItem("totalCost");
 
   const message =
-    "AgroLinkX Invoice Notification%0A%0A" +
+    "AgroLink Invoice Notification%0A%0A" +
     "Total Cost: RM " + cost + "%0A" +
     "Invoice sent to your email.";
 
